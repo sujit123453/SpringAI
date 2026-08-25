@@ -1,7 +1,6 @@
 package com.spring.ai.IntegratingOpenAI.controllers;
 
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.http.ResponseEntity;
+import com.spring.ai.IntegratingOpenAI.service.ChatService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,15 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping
 public class ChatController {
-    private ChatClient chatClient;
+    private final ChatService chatService;
 
-    public ChatController(ChatClient.Builder builder){
-        this.chatClient = builder.build();
+    public ChatController(ChatService chatService){
+        this.chatService = chatService;
     }
 
     @GetMapping("/chat")
-    public ResponseEntity<String> chat(@RequestParam(value = "q") String s){
-        String response = chatClient.prompt(s).call().content();
-        return ResponseEntity.ok(response);
+    public String chat(@RequestParam(value = "q", required = true) String s){
+        return chatService.chat(s);
     }
+
 }
