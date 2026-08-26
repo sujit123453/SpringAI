@@ -1,6 +1,8 @@
 package com.spring.ai.IntegratingOpenAI.service;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.ollama.OllamaChatModel;
+import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -9,10 +11,12 @@ import java.time.ZoneId;
 @Service
 public class ChatService {
 
-    private final ChatClient chatClient;
+    private final ChatClient openAiChatClient;
+    private final ChatClient ollamaChatClient;
 
-    public ChatService(ChatClient.Builder chatClient) {
-        this.chatClient = chatClient.build();
+    public ChatService(OpenAiChatModel openAiChatModel, OllamaChatModel ollamaChatModel) {
+       this.openAiChatClient = ChatClient.builder(openAiChatModel).build();
+       this.ollamaChatClient = ChatClient.builder(ollamaChatModel).build();
     }
 
     public String chat(String s) {
@@ -29,7 +33,7 @@ public class ChatService {
                 %s
                 """.formatted(currentDateTime, s);
 
-        return chatClient
+        return ollamaChatClient
                 .prompt()
                 .user(prompt)
                 .call()
